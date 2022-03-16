@@ -1,3 +1,4 @@
+close all;
 nbreal = 5;
 snr_direct =zeros(nbreal,2,11);
 snr_direct1 =zeros(nbreal,2,11);
@@ -28,9 +29,9 @@ coeff_util2_10  = zeros(nbreal,2);
 for k=1:nbreal
  k
  %mode reconstruction using the demodulation procedure
- [snr_direct(k,:,:),snr_demod(k,:,:)]   = Recons_demod(1,0,1);% 0 dB
- [snr_direct1(k,:,:),snr_demod1(k,:,:)] = Recons_demod(1,5,1);% 5 dB
- [snr_direct2(k,:,:),snr_demod2(k,:,:)] = Recons_demod(1,10,1);% 10 dB
+ [snr_direct(k,:,:),snr_demod(k,:,:)]   = Recons_demod(1,0);% 0 dB
+ [snr_direct1(k,:,:),snr_demod1(k,:,:)] = Recons_demod(1,5);% 5 dB
+ [snr_direct2(k,:,:),snr_demod2(k,:,:)] = Recons_demod(1,10);% 10 dB
   
  %mode reconstruction based downsampled STFT using optimized Hamming filter
  %with different downsampling values

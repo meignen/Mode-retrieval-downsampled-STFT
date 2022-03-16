@@ -33,13 +33,13 @@ function [snr_out,tfr_out]= test_down_three_case_noise(cas,sig,window,downsamp,S
  hlength=hlength+1-rem(hlength,2);%the length of the filter has to be odd
  h = tftb_window(hlength,window); 
  
- [hrow,hcol]=size(h); 
+ [hrow,~]=size(h); 
  Lh=(hrow-1)/2;
  
  %we add some gaussian white noise to the original signal s
  nbreal = 30;
  snr_out_accu = zeros(nbreal,downsamp);
- for k = 1:nbreal,    
+ for k = 1:nbreal    
   n     = randn(N,1)+1i*randn(N,1);
   [s1]  = sigmerge(s,n,SNR);
   sigma = std(s1-s);
@@ -57,7 +57,7 @@ function [snr_out,tfr_out]= test_down_three_case_noise(cas,sig,window,downsamp,S
    if shift == 0
      tfr_out = tfr;
    end    
-   for icol = 1:A(2), 
+   for icol = 1:A(2)
     B = tfr(:,icol);
     tfr_thresh(:,icol) = B.*(abs(B)> 3*sigma*norm2h(icol));
    end

@@ -44,12 +44,12 @@ function [SNR_modes,downsamp] = test_reconstruct_three_case_modes_noshift(cas,me
   hlength=floor(161);%optimal window determined by Rényi entropy
   hlength=hlength+1-rem(hlength,2);%the length of the filter has to be odd
   h = tftb_window(hlength,window);
-  [hrow,hcol]=size(h); 
+  [hrow,~]=size(h); 
   Lh=(hrow-1)/2;
  else
   %the window is the Gaussian window    
   prec = 10^(-3);
-  L =  0.15*Nfft;
+  L =  0.03*N;
   Lh = floor(L*sqrt(-log(prec)/pi))+1;
   h = amgauss(2*Lh+1,Lh+1,L); 
  end
@@ -64,10 +64,10 @@ function [SNR_modes,downsamp] = test_reconstruct_three_case_modes_noshift(cas,me
   sn   = sn(:);
   
   if (method == 1)
-   for p = 1:length(downsamp),
+   for p = 1:length(downsamp)
   
     SNR_int = zeros(1,nr);
-    [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft,cas,h,Lh,downsamp(p),0); 
+    [tfr,~] = tfrstft_three_case_down(sn,Nfft,cas,h,Lh,downsamp(p),0); 
    
      %estimation of the noise level
      Y2 = real(tfr);
@@ -81,12 +81,12 @@ function [SNR_modes,downsamp] = test_reconstruct_three_case_modes_noshift(cas,me
      modes = zeros(N,nr);
      B = size(tfr);
    
-     for j=1:nr,
+     for j=1:nr
    
       %construction of the TF mask
       tfr_int = zeros(B);
     
-      for r = 1:B(2),  
+      for r = 1:B(2)  
        val = 3*gamma_estime; %trheshold for the transfrom depending on the noise level
        k1 = 1;
        k2 = 1;
@@ -128,10 +128,10 @@ function [SNR_modes,downsamp] = test_reconstruct_three_case_modes_noshift(cas,me
     end
    end
   elseif (method == 2) 
-   for p = 1:length(downsamp),   
+   for p = 1:length(downsamp)   
     
     SNR_int = zeros(1,nr);
-    [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft,cas,h,Lh,downsamp(p),0); 
+    [tfr,~] = tfrstft_three_case_down(sn,Nfft,cas,h,Lh,downsamp(p),0); 
    
     %estimation of the noise level
     Y2 = real(tfr);
@@ -145,12 +145,12 @@ function [SNR_modes,downsamp] = test_reconstruct_three_case_modes_noshift(cas,me
     modes = zeros(N,nr);
     B = size(tfr);
    
-    for j=1:nr,
+    for j=1:nr
    
      %construction of the TF mask
      tfr_int = zeros(B);
     
-     for r = 1:B(2),  
+     for r = 1:B(2)
       val = 3*gamma_estime; %trheshold for the transfrom depending on the noise level
       eta = round(1/0.15*sqrt(-1/pi*log(val/(Abstfr(Cs(r,j),r)))));        
       tfr_int(max(1,Cs(r,j)-eta):min(B(1),Cs(r,j)+eta),r) = tfr(max(1,Cs(r,j)-eta):min(B(1),Cs(r,j)+eta),r);

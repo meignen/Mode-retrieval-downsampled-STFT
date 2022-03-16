@@ -14,7 +14,7 @@ function [tfr,norm2h] = tfrstft_three_case_down(x,N,cas,h,Lh,downsamp,shift)
  %tfr      : short time Fourier transform
  %norm2h   : the L2 norm of the filter on it support
  
- [xrow,xcol] = size(x);
+ [xrow,~] = size(x);
  
  t = 1+shift:downsamp:xrow; %the time instant, we consider the time instant shitfed by a factor shift.
   
@@ -24,7 +24,7 @@ function [tfr,norm2h] = tfrstft_three_case_down(x,N,cas,h,Lh,downsamp,shift)
   trans  = zeros(1,length(t));
   norm2h = zeros(1,length(t));
   
-  for icol=1:length(t),
+  for icol=1:length(t)
    tau = -min([Lh,t(icol)-1]):min([Lh,xrow-t(icol)]); 
    tfr(1:length(tau),icol) = x(t(icol)+tau,1).*h(Lh+1+tau);
    trans(icol)  = tau(1);
@@ -38,7 +38,7 @@ function [tfr,norm2h] = tfrstft_three_case_down(x,N,cas,h,Lh,downsamp,shift)
  if (cas == 2)||(cas == 3)
   %case with periodization    
   tau = -Lh:Lh;
-  for icol = 1:length(t), 
+  for icol = 1:length(t)
    if (t(icol) > Lh) && (t(icol) <= xrow-Lh)
     tfr(1:length(tau),icol) = x(t(icol)+tau,1).*h(Lh+1+tau); 
    else

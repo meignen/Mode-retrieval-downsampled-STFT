@@ -29,9 +29,9 @@ function [snr_direct,snr_demod] = Recons_demod_nr(sig,SNR,fact,nr)
   N = length(s);
   t  = (0:N-1)/N;
   if (N == 2^(floor(log2(N))))
-   Nfilt = N;
+   Nfft = N;
   else
-   Nfilt = 2^(floor(log2(N))+1);
+   Nfft = 2^(floor(log2(N))+1);
   end
   sigma_opt = 0.13;   
   Lg = 65;
@@ -40,13 +40,13 @@ function [snr_direct,snr_demod] = Recons_demod_nr(sig,SNR,fact,nr)
  end 
 
  if (sig <= 2)
-  Nfilt  = 512;
+  Nfft  = 512;
  end
  
  %the window is the Gaussian window    
  
  prec  = 10^(-3);
- L     =  sigma_opt*Nfilt;
+ L     = sigma_opt*Nfft;
  Lh    = floor(L*sqrt(-log(prec)/pi))+1;
  h     = amgauss(2*Lh+1,Lh+1,L); 
  n     = randn(N,1)+1i*randn(N,1);
@@ -54,27 +54,18 @@ function [snr_direct,snr_demod] = Recons_demod_nr(sig,SNR,fact,nr)
  
  %estimation of the threshold gamma
  %we use zero-padding to improve frequency resolution
- 
- Nfft4 = fact*Nfilt;
- [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft4,1,h,Lh,1,0); 
+
+ [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft,1,h,Lh,1,0); 
  Y2 = real(tfr);
  gamma = median(abs(Y2(:)))/0.6745; 
  
  %computation of the STFT, SST and VSST, and of the ridges associated with
  %VSST
- [STFT,SST,VSST] = sst2_new(sn,sigma_opt,Nfilt,Nfft4,3*gamma);
+ [STFT,SST,VSST] = sst2(sn,sigma_opt,Nfft,3*gamma);
  
- [Cs]  = exridge_mult(VSST,nr,0,0,clwin*Nfft4/Nfilt);
-%  imagesc(abs(VSST));
-%  set(gca,'ydir','normal');
-%  hold on;
-%  B = size(VSST);
-%  plot(1:B(2),Cs(1,:)-1,1:B(2),Cs(2,:)-1);
-%  hold off; 
-%  pause
- %computation of the phase of the modes and of the demodulated signals
+ [Cs]  = exridge_mult(VSST,nr,0,0,clwin);
  
- [sp1_s,integ1] = demod_multi(sn,VSST,Nfft4,t,N,nr,0,0,clwin*Nfft4/Nfilt);
+ [sp1_s,integ1] = demod_multi(sn,VSST,Nfft,t,N,nr,0,0,clwin);
  index = 1:N; 
  
  %signal reconstruction
@@ -94,27 +85,27 @@ function [snr_direct,snr_demod] = Recons_demod_nr(sig,SNR,fact,nr)
   imf    = zeros(nr,length(d),length(s));
  end
  
- for p = 1:nr,
-  [STFT1,SST1,VSST_sd_1] = sst2_new(sp1_s(p,:),sigma_opt,Nfilt,Nfilt,3*gamma);
+ for p = 1:nr
+  [STFT1,SST1,VSST_sd_1] = sst2(sp1_s(p,:),sigma_opt,Nfft,3*gamma);
   VSST_sd_int  = zeros(size(VSST_sd_1));
-  VSST_sd_int(round(100*(Nfilt/N))-clwin:round(100*(Nfilt/N))+clwin,:) =... 
-        VSST_sd_1(round(100*(Nfilt/N))-clwin:round(100*(Nfilt/N))+clwin,:);
+  VSST_sd_int(round(100*(Nfft/N))-clwin:round(100*(Nfft/N))+clwin,:) =... 
+        VSST_sd_1(round(100*(Nfft/N))-clwin:round(100*(Nfft/N))+clwin,:);
   [C, Es] = exridge(VSST_sd_int,0,0,clwin);
   
   if (sig <= 2)
    for  k = 1:length(d),
       
-    sign1(p,:) = recmodes(VSST,Cs(p,:),d(k));   
+    sign1(p,:) = 1/Nfft*recmodes(VSST,Cs(p,:),d(k));   
     snr_direct(p,k) =  snr(signal(p,index),sign1(p,index)-signal(p,index));
    
-    imf        = recmodes(VSST_sd_1,C,d(k));
+    imf        = 1/Nfft*recmodes(VSST_sd_1,C,d(k));
     imf        = imf.*exp(2*1i*pi*(integ1(p,:)-100.*t));
     snr_demod(p,k)  = snr(signal(p,index),imf(index)-signal(p,index));
    end
   else
    for  k = 1:length(d),
-    sign1(p,k,:) = recmodes(VSST,Cs(p,:),d(k));  
-    imf1   = recmodes(VSST_sd_1,C,d(k));
+    sign1(p,k,:) = 1/Nfft*recmodes(VSST,Cs(p,:),d(k));  
+    imf1   = 1/Nfft*recmodes(VSST_sd_1,C,d(k));
     imf(p,k,:)   = imf1.*exp(2*1i*pi*(integ1(p,:)-100.*t));
    end
   end

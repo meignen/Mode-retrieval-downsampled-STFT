@@ -76,7 +76,7 @@ function [Ren] = optimal_size(cas,sig,window,SNR)
   hold off; 
  else
    %the window is the Gaussian window    
-   sigma_w = 0.1:0.5:8;
+   sigma_w = 0.01:0.005:0.05;
    Ren = zeros(length(SNR),length(sigma_w));
    for k = 1:length(SNR),
     n    = randn(N,1)+1i*randn(N,1);
@@ -86,8 +86,8 @@ function [Ren] = optimal_size(cas,sig,window,SNR)
      
      %computation of the filter    
      prec = 10^(-3);
-     L =  sqrt(Nfft)*sigma_w(p);
-     Lh = floor(sigma_w(p)*sqrt(-Nfft*log(prec)/pi))+1;
+     L =  N*sigma_w(p);
+     Lh = floor(L*sqrt(-log(prec)/pi))+1;
      h = amgauss(2*Lh+1,Lh+1,L);
      [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft,cas,h,Lh,1,0);
      %computation of the Rényi entropy

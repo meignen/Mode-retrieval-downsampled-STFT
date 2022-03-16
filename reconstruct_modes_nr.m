@@ -64,7 +64,7 @@ function [SNR_modes,inter_moy,coeff_util] = reconstruct_modes_nr(sig,window,SNR,
  else
   %the window is the Gaussian window    
   prec = 10^(-3);
-  L =  sigma_opt*Nfft;
+  L =  sigma_opt*N;
   Lh = floor(L*sqrt(-log(prec)/pi))+1;
   h = amgauss(2*Lh+1,Lh+1,L); 
  end
@@ -73,7 +73,7 @@ function [SNR_modes,inter_moy,coeff_util] = reconstruct_modes_nr(sig,window,SNR,
  [sn] = sigmerge(s,n,SNR);
  sn   = sn(:);
   
- [tfr,norm2h] = tfrstft_three_case_down(sn,Nfft,2,h,Lh,downsamp,0); 
+ [tfr,~] = tfrstft_three_case_down(sn,Nfft,2,h,Lh,downsamp,0); 
  Abstfr = abs(tfr);
  
  %estimation of the noise level

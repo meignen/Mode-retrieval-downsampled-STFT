@@ -24,11 +24,11 @@ imagesc(1:B(2),(0:B(1)/2-1)/B(1),abs(tfr_out01(1:B(1)/2,:)));
 set(gca,'ydir','normal');
 axis square
 
-[SNR_out1_5,tfr_out1]  = test_down_three_case_noise(1,0,'Hamming',32,5);
+[SNR_out1_5,tfr_out1] = test_down_three_case_noise(1,0,'Hamming',32,5);
 [SNR_out2_5,tfr_out2] = test_down_three_case_noise(2,0,'Hamming',32,5);
 [SNR_out3_5,tfr_out3] = test_down_three_case_noise(3,0,'Hamming',32,5);
 
-[SNR_out01_5,tfr_out01]  = test_down_three_case_noise(1,1,'Hamming',32,5);
+[SNR_out01_5,tfr_out01] = test_down_three_case_noise(1,1,'Hamming',32,5);
 [SNR_out02_5,tfr_out02] = test_down_three_case_noise(2,1,'Hamming',32,5);
 [SNR_out03_5,tfr_out03] = test_down_three_case_noise(3,1,'Hamming',32,5);
 
